@@ -1,0 +1,16 @@
+/data/*
+.env
+*.log
+*.tmp
+node_modules/
+dist/
+coverage/
+.idea/
+.vscode/
+.DS_Store
+*.env
+preprocessed/test_X.npy
+preprocessed/test_y.npy
+preprocessed/train_X.npy
+preprocessed/train_y.npy
+*.npy
