@@ -8,7 +8,7 @@ from sklearn.preprocessing import LabelEncoder
 from collections import Counter
 
 
-DATASET_ROOT = "./Brain_Cancer"
+DATASET_ROOT = "Brain_Cancer"
 OUTPUT_DIR   = "./preprocessed"
 IMG_SIZE     = (224, 224)
 TEST_SIZE    = 0.2
@@ -18,6 +18,7 @@ CLASS_MAP = {
     "brain_glioma": "glioma",
     "brain_menin":  "meningioma",
     "brain_tumor":  "pituitary",
+    "notumor": "no_tumor"
 }
 
 

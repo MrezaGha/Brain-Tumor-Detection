@@ -1,0 +1,2412 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SynapsAgent — Brain Tumor AI Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Instrument+Serif:ital@0;1&display=swap"
+    rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    :root,
+    [data-theme="light"] {
+      --bg: #f7f6f2;
+      --surface: #f9f8f5;
+      --surface-2: #fbfbf9;
+      --surface-off: #f0ede9;
+      --divider: #dcd9d5;
+      --border: #d4d1ca;
+      --text: #28251d;
+      --muted: #6b6a65;
+      --faint: #bab9b4;
+      --primary: #01696f;
+      --primary-h: #0c4e54;
+      --primary-l: #cedcd8;
+      --success: #437a22;
+      --success-l: #d4dfcc;
+      --error: #a12c7b;
+      --error-l: #e0ced7;
+      --warn: #964219;
+      --warn-l: #ddcfc6;
+      --gold: #d19900;
+      --gold-l: #f5edcc;
+      --red: #a13544;
+      --red-l: #ddd0ce;
+      --font: 'Inter', 'Helvetica Neue', sans-serif;
+      --display: 'Instrument Serif', Georgia, serif;
+      --tx-xs: clamp(.75rem, .7rem + .25vw, .875rem);
+      --tx-sm: clamp(.875rem, .8rem + .35vw, 1rem);
+      --tx-base: clamp(1rem, .95rem + .25vw, 1.125rem);
+      --tx-lg: clamp(1.125rem, 1rem + .75vw, 1.5rem);
+      --s1: .25rem;
+      --s2: .5rem;
+      --s3: .75rem;
+      --s4: 1rem;
+      --s5: 1.25rem;
+      --s6: 1.5rem;
+      --s8: 2rem;
+      --s10: 2.5rem;
+      --s12: 3rem;
+      --r-sm: .375rem;
+      --r-md: .5rem;
+      --r-lg: .75rem;
+      --r-xl: 1rem;
+      --r-full: 9999px;
+      --sh-sm: 0 1px 3px oklch(.2 .01 80/.07);
+      --sh-md: 0 4px 14px oklch(.2 .01 80/.09);
+      --sh-lg: 0 12px 32px oklch(.2 .01 80/.12);
+      --ease: 180ms cubic-bezier(.16, 1, .3, 1);
+    }
+
+    [data-theme="dark"] {
+      --bg: #171614;
+      --surface: #1c1b19;
+      --surface-2: #201f1d;
+      --surface-off: #252320;
+      --divider: #2e2d2b;
+      --border: #3a3836;
+      --text: #cdccca;
+      --muted: #797876;
+      --faint: #5a5957;
+      --primary: #4f98a3;
+      --primary-h: #227f8b;
+      --primary-l: #1e3535;
+      --success: #6daa45;
+      --success-l: #1e3020;
+      --error: #d163a7;
+      --error-l: #3c1f30;
+      --warn: #bb653b;
+      --warn-l: #3a2218;
+      --gold: #e8af34;
+      --gold-l: #3a2e14;
+      --red: #dd6974;
+      --red-l: #3a1c22;
+      --sh-sm: 0 1px 3px #0004;
+      --sh-md: 0 4px 14px #0005;
+      --sh-lg: 0 12px 32px #0007;
+    }
+
+    @media(prefers-color-scheme:dark) {
+      :root:not([data-theme]) {
+        --bg: #171614;
+        --surface: #1c1b19;
+        --surface-2: #201f1d;
+        --surface-off: #252320;
+        --divider: #2e2d2b;
+        --border: #3a3836;
+        --text: #cdccca;
+        --muted: #797876;
+        --faint: #5a5957;
+        --primary: #4f98a3;
+        --primary-h: #227f8b;
+        --primary-l: #1e3535;
+        --success: #6daa45;
+        --success-l: #1e3020;
+        --error: #d163a7;
+        --error-l: #3c1f30;
+        --warn: #bb653b;
+        --warn-l: #3a2218;
+        --gold: #e8af34;
+        --gold-l: #3a2e14;
+        --red: #dd6974;
+        --red-l: #3a1c22;
+      }
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html {
+      -webkit-font-smoothing: antialiased;
+      scroll-behavior: smooth
+    }
+
+    body {
+      min-height: 100dvh;
+      font-family: var(--font);
+      font-size: var(--tx-base);
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6
+    }
+
+    input,
+    button,
+    textarea,
+    select {
+      font: inherit;
+      color: inherit
+    }
+
+    img {
+      display: block;
+      max-width: 100%
+    }
+
+    button {
+      cursor: pointer;
+      background: none;
+      border: none
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 3px;
+      border-radius: var(--r-sm)
+    }
+
+    /* Header */
+    .hdr {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--surface);
+      border-bottom: 1px solid var(--divider);
+      box-shadow: var(--sh-sm);
+      padding: var(--s3) var(--s6);
+      display: flex;
+      align-items: center;
+      justify-content: space-between
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: var(--s3)
+    }
+
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      background: var(--primary);
+      border-radius: var(--r-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0
+    }
+
+    .logo-mark svg {
+      color: #fff
+    }
+
+    .logo-name {
+      font-family: var(--display);
+      font-size: var(--tx-lg);
+      line-height: 1.2
+    }
+
+    .logo-sub {
+      font-size: var(--tx-xs);
+      color: var(--muted);
+      margin-top: 1px
+    }
+
+    .hdr-right {
+      display: flex;
+      align-items: center;
+      gap: var(--s3)
+    }
+
+    .pid-badge {
+      display: none;
+      align-items: center;
+      gap: var(--s2);
+      padding: var(--s1) var(--s3);
+      background: var(--gold-l);
+      border: 1px solid var(--gold);
+      border-radius: var(--r-full);
+      font-size: var(--tx-xs);
+      font-weight: 600;
+      color: var(--gold)
+    }
+
+    .pid-badge.show {
+      display: inline-flex
+    }
+
+    .theme-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--r-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      transition: background var(--ease), color var(--ease)
+    }
+
+    .theme-btn:hover {
+      background: var(--surface-off);
+      color: var(--text)
+    }
+
+    /* Pipeline */
+    .pipeline {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--s3) var(--s6);
+      background: var(--surface);
+      border-bottom: 1px solid var(--divider);
+      overflow-x: auto;
+      flex-wrap: wrap;
+      gap: 0
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: var(--s2);
+      padding: var(--s2) var(--s4);
+      border-radius: var(--r-full);
+      font-size: var(--tx-sm);
+      font-weight: 500;
+      color: var(--muted);
+      white-space: nowrap;
+      transition: background var(--ease), color var(--ease)
+    }
+
+    .step.active {
+      color: var(--primary);
+      background: var(--primary-l)
+    }
+
+    .step.done {
+      color: var(--success);
+      background: var(--success-l)
+    }
+
+    .step.err {
+      color: var(--error);
+      background: var(--error-l)
+    }
+
+    .step-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--r-full);
+      background: currentColor;
+      flex-shrink: 0
+    }
+
+    .step-arr {
+      color: var(--faint);
+      margin: 0 2px;
+      flex-shrink: 0
+    }
+
+    /* Layout */
+    .main {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s6);
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--s6);
+      align-items: start
+    }
+
+    @media(max-width:768px) {
+      .main {
+        grid-template-columns: 1fr
+      }
+    }
+
+    /* Panel */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      box-shadow: var(--sh-sm);
+      overflow: hidden
+    }
+
+    .ph {
+      padding: var(--s4) var(--s6);
+      border-bottom: 1px solid var(--divider);
+      display: flex;
+      align-items: center;
+      gap: var(--s3)
+    }
+
+    .ph-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--r-md);
+      background: var(--primary-l);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      flex-shrink: 0
+    }
+
+    .ph-title {
+      font-weight: 600;
+      font-size: var(--tx-base)
+    }
+
+    .ph-badge {
+      margin-left: auto;
+      padding: var(--s1) var(--s3);
+      border-radius: var(--r-full);
+      font-size: var(--tx-xs);
+      font-weight: 600;
+      background: var(--primary-l);
+      color: var(--primary)
+    }
+
+    .pb {
+      padding: var(--s5);
+      display: flex;
+      flex-direction: column;
+      gap: var(--s4)
+    }
+
+    /* ── CHAT BOX ────────────────────────────────────── */
+    .chat-wrap {
+      display: flex;
+      flex-direction: column;
+      height: 320px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden
+    }
+
+    .chat-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--s4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--s3);
+      scroll-behavior: smooth
+    }
+
+    .chat-scroll::-webkit-scrollbar {
+      width: 4px
+    }
+
+    .chat-scroll::-webkit-scrollbar-track {
+      background: transparent
+    }
+
+    .chat-scroll::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: var(--r-full)
+    }
+
+    /* chat empty */
+    .chat-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: var(--s3);
+      color: var(--faint);
+      text-align: center
+    }
+
+    .chat-empty p {
+      font-size: var(--tx-sm);
+      max-width: 24ch
+    }
+
+    /* chat bubbles */
+    .msg {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-width: 85%
+    }
+
+    .msg.agent {
+      align-self: flex-start
+    }
+
+    .msg.user {
+      align-self: flex-end
+    }
+
+    .msg-sender {
+      font-size: var(--tx-xs);
+      font-weight: 600;
+      color: var(--muted);
+      padding: 0 var(--s2)
+    }
+
+    .msg.user .msg-sender {
+      text-align: right;
+      color: var(--primary)
+    }
+
+    .msg-bubble {
+      padding: var(--s3) var(--s4);
+      border-radius: var(--r-lg);
+      font-size: var(--tx-sm);
+      line-height: 1.5
+    }
+
+    .msg.agent .msg-bubble {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: var(--r-sm);
+      color: var(--text)
+    }
+
+    .msg.user .msg-bubble {
+      background: var(--primary);
+      color: #fff;
+      border-bottom-right-radius: var(--r-sm)
+    }
+
+    /* symptom chips inside a bubble */
+    .bubble-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--s2);
+      margin-top: var(--s2)
+    }
+
+    .bubble-chip {
+      padding: 2px var(--s3);
+      border-radius: var(--r-full);
+      font-size: var(--tx-xs);
+      font-weight: 500;
+      background: rgba(255, 255, 255, .2);
+      border: 1px solid rgba(255, 255, 255, .3)
+    }
+
+    .msg.agent .bubble-chip {
+      background: var(--primary-l);
+      border-color: var(--primary);
+      color: var(--primary)
+    }
+
+    /* missing fields inside bubble */
+    .bubble-missing {
+      margin-top: var(--s2);
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--s2)
+    }
+
+    .missing-chip {
+      padding: 2px var(--s3);
+      border-radius: var(--r-full);
+      font-size: var(--tx-xs);
+      font-weight: 500;
+      background: var(--warn-l);
+      border: 1px solid var(--warn);
+      color: var(--warn)
+    }
+
+    /* typing indicator */
+    .typing-bubble {
+      align-self: flex-start;
+      padding: var(--s3) var(--s4);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      border-bottom-left-radius: var(--r-sm);
+      display: none;
+      align-items: center;
+      gap: 4px
+    }
+
+    .typing-bubble.show {
+      display: flex
+    }
+
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--muted);
+      animation: tdot 1.2s ease-in-out infinite
+    }
+
+    .typing-dot:nth-child(2) {
+      animation-delay: .2s
+    }
+
+    .typing-dot:nth-child(3) {
+      animation-delay: .4s
+    }
+
+    @keyframes tdot {
+
+      0%,
+      80%,
+      100% {
+        transform: scale(.8);
+        opacity: .5
+      }
+
+      40% {
+        transform: scale(1.1);
+        opacity: 1
+      }
+    }
+
+    /* ── RECORDER ────────────────────────────────────── */
+    .recorder-area {
+      background: var(--surface-off);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: var(--s5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--s4)
+    }
+
+    /* hint bar shown while recording */
+    .enter-hint {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: var(--s2);
+      padding: var(--s2) var(--s4);
+      background: var(--red-l);
+      border: 1px solid var(--red);
+      border-radius: var(--r-full);
+      font-size: var(--tx-xs);
+      font-weight: 600;
+      color: var(--red);
+      width: 100%
+    }
+
+    .enter-hint.show {
+      display: flex
+    }
+
+    .kbd {
+      display: inline-flex;
+      align-items: center;
+      padding: 1px 6px;
+      background: var(--red);
+      color: #fff;
+      border-radius: var(--r-sm);
+      font-size: 10px;
+      font-weight: 700;
+      font-family: monospace;
+      letter-spacing: .03em
+    }
+
+    .mic-ring {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      flex-shrink: 0
+    }
+
+    .mic-btn {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--r-full);
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--sh-md);
+      transition: background var(--ease), transform var(--ease);
+      position: relative;
+      z-index: 1
+    }
+
+    .mic-btn:hover {
+      background: var(--primary-h);
+      transform: scale(1.05)
+    }
+
+    .mic-btn.recording {
+      background: var(--red);
+      animation: pulse .9s ease-in-out infinite
+    }
+
+    .mic-btn:disabled {
+      background: var(--border);
+      color: var(--faint);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+      animation: none
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1)
+      }
+
+      50% {
+        transform: scale(1.07)
+      }
+    }
+
+    .ring {
+      position: absolute;
+      inset: -8px;
+      border-radius: var(--r-full);
+      border: 2px solid var(--red);
+      opacity: 0;
+      pointer-events: none
+    }
+
+    .mic-btn.recording~.ring:nth-child(1) {
+      animation: ripple 1.5s ease-out infinite
+    }
+
+    .mic-btn.recording~.ring:nth-child(2) {
+      animation: ripple 1.5s ease-out .5s infinite
+    }
+
+    .mic-btn.recording~.ring:nth-child(3) {
+      animation: ripple 1.5s ease-out 1s infinite
+    }
+
+    @keyframes ripple {
+      0% {
+        transform: scale(.9);
+        opacity: .6
+      }
+
+      100% {
+        transform: scale(1.5);
+        opacity: 0
+      }
+    }
+
+    .rec-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--s1)
+    }
+
+    .rec-label {
+      font-size: var(--tx-sm);
+      font-weight: 500;
+      color: var(--muted);
+      text-align: center
+    }
+
+    .rec-timer {
+      font-size: var(--tx-lg);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--red);
+      display: none;
+      min-width: 3ch;
+      text-align: center
+    }
+
+    .rec-timer.show {
+      display: block
+    }
+
+    canvas.waveform {
+      width: 100%;
+      height: 44px;
+      border-radius: var(--r-md);
+      background: var(--surface-2);
+      display: none
+    }
+
+    canvas.waveform.show {
+      display: block
+    }
+
+    /* playback row */
+    .playback {
+      display: none;
+      flex-direction: column;
+      gap: var(--s3);
+      width: 100%
+    }
+
+    .playback.show {
+      display: flex
+    }
+
+    .playback audio {
+      width: 100%;
+      border-radius: var(--r-md)
+    }
+
+    .playback-row {
+      display: flex;
+      gap: var(--s2)
+    }
+
+    /* ── MRI ─────────────────────────────────────────── */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--r-lg);
+      padding: var(--s8) var(--s6);
+      text-align: center;
+      cursor: pointer;
+      transition: border-color var(--ease), background var(--ease);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--s3)
+    }
+
+    .upload-zone:hover,
+    .upload-zone.drag {
+      border-color: var(--primary);
+      background: var(--primary-l)
+    }
+
+    .upload-zone.has-file {
+      border-color: var(--success);
+      background: var(--success-l)
+    }
+
+    .up-icon {
+      color: var(--muted)
+    }
+
+    .upload-zone.has-file .up-icon {
+      color: var(--success)
+    }
+
+    .up-label {
+      font-size: var(--tx-sm);
+      color: var(--muted)
+    }
+
+    .upload-zone.has-file .up-label {
+      color: var(--success);
+      font-weight: 500
+    }
+
+    .up-sub {
+      font-size: var(--tx-xs);
+      color: var(--faint)
+    }
+
+    #mri-input {
+      display: none
+    }
+
+    .mri-preview {
+      display: none;
+      margin-top: var(--s3)
+    }
+
+    .mri-preview img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: contain;
+      border-radius: var(--r-md);
+      border: 1px solid var(--border);
+      background: #000
+    }
+
+    .mri-preview.show {
+      display: block
+    }
+
+    /* ── Buttons ─────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--s2);
+      padding: var(--s3) var(--s5);
+      border-radius: var(--r-md);
+      font-size: var(--tx-sm);
+      font-weight: 500;
+      min-height: 44px;
+      transition: background var(--ease), box-shadow var(--ease), transform var(--ease)
+    }
+
+    .btn:active {
+      transform: translateY(1px)
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: var(--sh-sm)
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-h);
+      box-shadow: var(--sh-md)
+    }
+
+    .btn-primary:disabled {
+      background: var(--border);
+      color: var(--faint);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: #fff;
+      box-shadow: var(--sh-sm)
+    }
+
+    .btn-success:hover {
+      filter: brightness(.9)
+    }
+
+    .btn-success:disabled {
+      background: var(--border);
+      color: var(--faint);
+      cursor: not-allowed
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border)
+    }
+
+    .btn-outline:hover {
+      background: var(--surface-off)
+    }
+
+    .btn-full {
+      width: 100%
+    }
+
+    .btn-sm {
+      padding: var(--s2) var(--s3);
+      font-size: var(--tx-xs);
+      min-height: 36px
+    }
+
+    .spinner {
+      width: 15px;
+      height: 15px;
+      border: 2px solid rgba(255, 255, 255, .3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    /* ── Summary Panel ───────────────────────────────── */
+    .sum-empty {
+      text-align: center;
+      padding: var(--s12) var(--s8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--s4)
+    }
+
+    .sum-empty-icon {
+      color: var(--faint)
+    }
+
+    .sum-empty h3 {
+      font-size: var(--tx-base);
+      font-weight: 500;
+      color: var(--muted)
+    }
+
+    .sum-empty p {
+      font-size: var(--tx-sm);
+      max-width: 30ch;
+      color: var(--muted)
+    }
+
+    .sum-content {
+      display: none;
+      flex-direction: column;
+      gap: var(--s5)
+    }
+
+    .sum-content.show {
+      display: flex
+    }
+
+    .dx-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s2);
+      padding: var(--s2) var(--s4);
+      border-radius: var(--r-full);
+      font-size: var(--tx-sm);
+      font-weight: 600;
+      text-transform: capitalize
+    }
+
+    .dx-badge.glioma {
+      background: var(--error-l);
+      color: var(--error)
+    }
+
+    .dx-badge.meningioma {
+      background: var(--warn-l);
+      color: var(--warn)
+    }
+
+    .dx-badge.pituitary {
+      background: var(--gold-l);
+      color: var(--gold)
+    }
+
+    .dx-badge.notumor {
+      background: var(--success-l);
+      color: var(--success)
+    }
+
+    .dx-badge.unknown {
+      background: var(--surface-off);
+      color: var(--muted)
+    }
+
+    .conf-wrap {
+      display: flex;
+      align-items: center;
+      gap: var(--s3);
+      font-size: var(--tx-sm)
+    }
+
+    .conf-bar {
+      flex: 1;
+      height: 8px;
+      border-radius: var(--r-full);
+      background: var(--surface-off);
+      overflow: hidden
+    }
+
+    .conf-fill {
+      height: 100%;
+      border-radius: var(--r-full);
+      background: var(--primary);
+      transition: width .6s cubic-bezier(.16, 1, .3, 1)
+    }
+
+    .conf-pct {
+      font-weight: 600;
+      min-width: 40px;
+      text-align: right
+    }
+
+    .kv {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: var(--s2) var(--s4);
+      font-size: var(--tx-sm)
+    }
+
+    .kv-k {
+      color: var(--muted);
+      font-weight: 500;
+      white-space: nowrap
+    }
+
+    .intake-grid {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s2)
+    }
+
+    .intake-row {
+      display: grid;
+      grid-template-columns: minmax(132px, .42fr) 1fr;
+      gap: var(--s3);
+      align-items: start;
+      padding: var(--s3) var(--s4);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      background: var(--surface-2);
+      font-size: var(--tx-sm)
+    }
+
+    .intake-row.low {
+      background: var(--surface-off)
+    }
+
+    .intake-label {
+      color: var(--muted);
+      font-weight: 600
+    }
+
+    .intake-value {
+      color: var(--text);
+      line-height: 1.45
+    }
+
+    .sec-label {
+      font-size: var(--tx-xs);
+      color: var(--muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: var(--s2)
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--divider)
+    }
+
+    .banner {
+      display: flex;
+      align-items: center;
+      gap: var(--s3);
+      padding: var(--s3) var(--s4);
+      border-radius: var(--r-md);
+      font-size: var(--tx-sm);
+      font-weight: 500
+    }
+
+    .b-warn {
+      background: var(--warn-l);
+      border: 1px solid var(--warn);
+      color: var(--warn);
+      display: none
+    }
+
+    .b-warn.show {
+      display: flex
+    }
+
+    .b-ok {
+      background: var(--success-l);
+      border: 1px solid var(--success);
+      color: var(--success);
+      display: none
+    }
+
+    .b-ok.show {
+      display: flex
+    }
+
+    .doc-edit {
+      display: none;
+      flex-direction: column;
+      gap: var(--s4);
+      padding: var(--s5);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg)
+    }
+
+    .doc-edit.show {
+      display: flex
+    }
+
+    .doc-edit-title {
+      font-size: var(--tx-sm);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: var(--s2)
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s2)
+    }
+
+    label {
+      font-size: var(--tx-sm);
+      font-weight: 500
+    }
+
+    label .hint {
+      font-weight: 400;
+      color: var(--muted);
+      margin-left: var(--s1)
+    }
+
+    textarea,
+    select {
+      width: 100%;
+      padding: var(--s3) var(--s4);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      font-size: var(--tx-sm);
+      transition: border-color var(--ease), box-shadow var(--ease);
+      resize: vertical
+    }
+
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px oklch(from var(--primary) l c h/.12)
+    }
+
+    textarea {
+      min-height: 80px
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: var(--s6);
+      right: var(--s6);
+      padding: var(--s3) var(--s5);
+      background: var(--text);
+      color: var(--bg);
+      border-radius: var(--r-md);
+      box-shadow: var(--sh-lg);
+      font-size: var(--tx-sm);
+      font-weight: 500;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+      transition: opacity .3s, transform .3s;
+      z-index: 100
+    }
+
+    .toast.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0)
+    }
+
+    .toast.ok {
+      background: var(--success);
+      color: #fff
+    }
+
+    .toast.err {
+      background: var(--error);
+      color: #fff
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header class="hdr">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path
+            d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z" />
+          <path
+            d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z" />
+        </svg>
+      </div>
+      <div>
+        <div class="logo-name">SynapsAgent</div>
+        <div class="logo-sub">Brain Tumor AI Diagnostic Assistant</div>
+      </div>
+    </div>
+    <div class="hdr-right">
+      <span class="pid-badge" id="pid-badge">
+        <i data-lucide="user" style="width:11px;height:11px;"></i>
+        <span id="pid-text">—</span>
+      </span>
+      <button class="theme-btn" data-theme-toggle aria-label="Toggle dark mode">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Pipeline -->
+  <nav class="pipeline">
+    <div class="step" id="s-record"><span class="step-dot"></span>1 · Record Symptoms</div>
+    <span class="step-arr">›</span>
+    <div class="step" id="s-followup"><span class="step-dot"></span>2 · Follow-up Q&amp;A</div>
+    <span class="step-arr">›</span>
+    <div class="step" id="s-mri"><span class="step-dot"></span>3 · MRI Upload</div>
+    <span class="step-arr">›</span>
+    <div class="step" id="s-classify"><span class="step-dot"></span>4 · Classification</div>
+    <span class="step-arr">›</span>
+    <div class="step" id="s-review"><span class="step-dot"></span>5 · Doctor Review</div>
+  </nav>
+
+  <main class="main">
+
+    <!-- LEFT: Input Column -->
+    <div style="display:flex;flex-direction:column;gap:var(--s5);">
+
+      <!-- Symptom Chat + Recorder -->
+      <div class="panel">
+        <div class="ph">
+          <div class="ph-icon"><i data-lucide="message-square" style="width:16px;height:16px;"></i></div>
+          <div class="ph-title">Symptom Intake</div>
+          <div class="ph-badge" id="round-badge" style="display:none;">Round <span id="round-num">1</span></div>
+        </div>
+        <div class="pb">
+
+          <!-- ── Chat Box ── -->
+          <div class="chat-wrap">
+            <div class="chat-scroll" id="chat-scroll">
+
+              <!-- Initial greeting from agent -->
+              <div class="msg agent" id="msg-welcome">
+                <div class="msg-sender">SynapsAgent</div>
+                <div class="msg-bubble">
+                  Hello! I'll help collect the patient's symptoms.<br>
+                  Press the microphone button below (or press <strong>Space</strong>) to start recording. Press
+                  <strong>Enter</strong> to stop.
+                </div>
+              </div>
+
+              <!-- Typing indicator (shown while server processes) -->
+              <div class="typing-bubble" id="typing">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ── Recorder ── -->
+          <div class="recorder-area">
+
+            <!-- Enter-to-stop hint (shown only while recording) -->
+            <div class="enter-hint" id="enter-hint">
+              <i data-lucide="keyboard" style="width:13px;height:13px;"></i>
+              Press <span class="kbd">Enter</span> or click the button to stop recording
+            </div>
+
+            <div style="display:flex;align-items:center;gap:var(--s5);width:100%;">
+              <div class="mic-ring">
+                <button class="mic-btn" id="mic-btn" onclick="toggleRecording()" aria-label="Start recording"
+                  title="Start / Stop recording (Space)">
+                  <i data-lucide="mic" style="width:26px;height:26px;"></i>
+                </button>
+                <div class="ring"></div>
+                <div class="ring"></div>
+                <div class="ring"></div>
+              </div>
+              <div class="rec-meta" style="flex:1;">
+                <div class="rec-label" id="rec-label">Press mic or <strong>Space</strong> to start</div>
+                <div class="rec-timer" id="rec-timer">0:00</div>
+                <canvas class="waveform" id="waveform" width="300" height="44"></canvas>
+              </div>
+            </div>
+
+            <!-- Playback after recording stops -->
+            <div class="playback" id="playback">
+              <audio id="audio-player" controls style="width:100%;border-radius:var(--r-md);"></audio>
+              <div class="playback-row">
+                <button class="btn btn-primary" id="btn-send" onclick="submitAudio()" style="flex:1;" disabled>
+                  <i data-lucide="send" style="width:15px;height:15px;"></i>
+                  Send to Agent
+                </button>
+                <button class="btn btn-outline btn-sm" onclick="retake()" title="Re-record">
+                  <i data-lucide="rotate-ccw" style="width:14px;height:14px;"></i>
+                  Retake
+                </button>
+              </div>
+            </div>
+
+          </div><!-- /recorder-area -->
+        </div>
+      </div>
+
+      <!-- MRI Upload Panel -->
+      <div class="panel" id="mri-panel">
+        <div class="ph">
+          <div class="ph-icon"><i data-lucide="scan" style="width:16px;height:16px;"></i></div>
+          <div class="ph-title">MRI Scan Upload</div>
+        </div>
+        <div class="pb">
+          <input type="file" id="mri-input" accept="image/*,.jpg,.jpeg,.png,.tif,.tiff"
+            onchange="onFileSelect(event)" />
+          <div class="upload-zone" id="upload-zone" onclick="document.getElementById('mri-input').click()"
+            ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)" role="button"
+            tabindex="0" onkeydown="if(event.key==='Enter')document.getElementById('mri-input').click()">
+            <i data-lucide="upload-cloud" style="width:36px;height:36px;" class="up-icon"></i>
+            <div class="up-label" id="up-label">Click to select or drag &amp; drop MRI image</div>
+            <div class="up-sub">JPG, PNG, TIFF · max 50 MB</div>
+          </div>
+          <div class="mri-preview" id="mri-preview">
+            <img id="mri-img" src="" alt="MRI preview" />
+          </div>
+          <button class="btn btn-primary btn-full" id="btn-upload" onclick="uploadMRI()" disabled>
+            <i data-lucide="send" style="width:15px;height:15px;"></i>
+            Submit MRI &amp; Continue
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /left col -->
+
+    <!-- RIGHT: Summary Panel -->
+    <div style="display:flex;flex-direction:column;gap:var(--s5);">
+      <div class="panel">
+        <div class="ph">
+          <div class="ph-icon" style="background:var(--success-l);color:var(--success);">
+            <i data-lucide="file-text" style="width:16px;height:16px;"></i>
+          </div>
+          <div class="ph-title">Agent Summary</div>
+        </div>
+        <div class="pb">
+          <div class="sum-empty" id="sum-empty">
+            <i data-lucide="brain" style="width:48px;height:48px;" class="sum-empty-icon"></i>
+            <h3>Waiting for recording</h3>
+            <p>Record symptoms to start the diagnostic workflow.</p>
+          </div>
+
+          <div class="sum-content" id="sum-content">
+            <div>
+              <div class="sec-label">MRI Classification</div>
+              <span class="dx-badge unknown" id="dx-badge">Pending…</span>
+            </div>
+            <div>
+              <div class="sec-label">Model Confidence</div>
+              <div class="conf-wrap">
+                <div class="conf-bar">
+                  <div class="conf-fill" id="conf-fill" style="width:0%"></div>
+                </div>
+                <span class="conf-pct" id="conf-pct">—</span>
+              </div>
+            </div>
+            <hr class="divider" />
+            <div>
+              <div class="sec-label">Detected Symptoms</div>
+              <div id="sym-chips" style="display:flex;flex-wrap:wrap;gap:var(--s2);"></div>
+            </div>
+            <div>
+              <div class="sec-label">Patient Intake</div>
+              <div id="patient-intake" class="intake-grid"></div>
+            </div>
+            <div class="kv" id="kv-grid"></div>
+
+            <div id="doctor-notes-display" style="display:none;flex-direction:column;gap:var(--s2)">
+              <div class="sec-label">Doctor Notes</div>
+              <div id="doctor-notes-text" style="font-size:var(--tx-sm);color:var(--text);
+                  padding:var(--s3) var(--s4);background:var(--surface-2);border:1px solid var(--border);
+                  border-radius:var(--r-md);line-height:1.6;white-space:pre-wrap"></div>
+            </div>
+
+            <div class="banner b-warn" id="b-warn">
+              <i data-lucide="alert-triangle" style="width:16px;height:16px;flex-shrink:0;"></i>
+              Doctor review required — approve or correct results below.
+            </div>
+            <div class="banner b-ok" id="b-ok">
+              <i data-lucide="check-circle-2" style="width:16px;height:16px;flex-shrink:0;"></i>
+              Results approved by doctor.
+            </div>
+
+            <button class="btn btn-success btn-full" id="btn-approve" onclick="approveResults()" disabled>
+              <i data-lucide="check" style="width:15px;height:15px;"></i>
+              Approve Results
+            </button>
+
+            <hr class="divider" />
+
+            <div class="doc-edit show" id="doc-edit">
+              <div class="doc-edit-title">
+                <i data-lucide="cpu" style="width:14px;height:14px"></i> AI Prediction
+              </div>
+
+              <!-- AI model results — populated by renderSummary -->
+              <div id="ai-prediction-panel" style="display:none;flex-direction:column;gap:var(--s2);
+                  padding:var(--s3) var(--s4);background:var(--surface-2);border:1px solid var(--border);
+                  border-radius:var(--r-md);font-size:var(--tx-sm)">
+                <div style="display:flex;align-items:center;gap:var(--s3)">
+                  <span style="color:var(--muted);font-weight:500;min-width:120px">Predicted Class</span>
+                  <span id="ai-pred-class" style="font-weight:600"></span>
+                </div>
+                <div style="display:flex;align-items:center;gap:var(--s3)">
+                  <span style="color:var(--muted);font-weight:500;min-width:120px">Confidence</span>
+                  <span id="ai-pred-conf" style="font-weight:600"></span>
+                </div>
+              </div>
+
+              <div class="doc-edit-title" style="margin-top:var(--s3)">
+                <i data-lucide="pencil" style="width:14px;height:14px"></i> Doctor Notes &amp; Corrections
+              </div>
+
+              <div class="field">
+                <label for="dx-select">Correct diagnosis <span class="hint">if needed</span></label>
+                <select id="dx-select">
+                  <option value="">— Keep model prediction —</option>
+                  <option value="glioma">Glioma</option>
+                  <option value="meningioma">Meningioma</option>
+                  <option value="pituitary">Pituitary Tumor</option>
+                  <option value="notumor">No Tumor</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="doc-note">Doctor's notes</label>
+                <textarea id="doc-note" rows="4"
+                  placeholder="Clinical observations, follow-up plan, referrals..."></textarea>
+              </div>
+
+              <button class="btn btn-primary btn-full" onclick="saveNote()">
+                <i data-lucide="save" style="width:15px;height:15px"></i> Save Diagnosis &amp; Notes
+              </button>
+            </div>
+
+            <button class="btn btn-outline btn-full" id="btn-edit-toggle" onclick="toggleEdit()" style="display:none;">
+              <i data-lucide="pencil" style="width:15px;height:15px;"></i>
+              Add / Edit Doctor Note
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+  <script>
+    // ── App State ────────────────────────────────────────────────────────────────
+    let patientId = null;
+    let audioRound = 0;
+    let mediaRec = null;
+    let audioChunks = [];
+    let isRecording = false;
+    let timerInt = null;
+    let recSecs = 0;
+    let blobURL = null;
+    let audioBlob = null;
+    let mriFile = null;
+    let audioCtx = null;
+    let analyser = null;
+    let animFrame = null;
+    let lastState = null;
+    let lastTranscript = null;
+    let symptomSummaryAnnounced = false;
+    let mriClassificationAnnounced = false;
+    let finalReviewAnnounced = false;
+
+    // ── Init ─────────────────────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      initTheme();
+
+      // ── Keyboard shortcuts ────────────────────────────────────────────────────
+      document.addEventListener('keydown', e => {
+        const tag = document.activeElement.tagName;
+        // Don't hijack keys when typing in textarea/input/select
+        if (['TEXTAREA', 'INPUT', 'SELECT'].includes(tag)) return;
+
+        if (e.code === 'Space' && !isRecording) {
+          e.preventDefault();
+          startRecording();
+        }
+        if (e.code === 'Enter' && isRecording) {
+          e.preventDefault();
+          stopRecording();
+        }
+      });
+    });
+
+    // ── Theme ────────────────────────────────────────────────────────────────────
+    function initTheme() {
+      const btn = document.querySelector('[data-theme-toggle]');
+      const html = document.documentElement;
+      let dark = matchMedia('(prefers-color-scheme:dark)').matches;
+      html.setAttribute('data-theme', dark ? 'dark' : 'light');
+      updateThemeIcon(btn, dark);
+      btn.addEventListener('click', () => {
+        dark = !dark;
+        html.setAttribute('data-theme', dark ? 'dark' : 'light');
+        updateThemeIcon(btn, dark);
+      });
+    }
+    function updateThemeIcon(btn, dark) {
+      btn.innerHTML = dark
+        ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>`
+        : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+    }
+
+    // ── Pipeline ─────────────────────────────────────────────────────────────────
+    const STEPS = ['s-record', 's-followup', 's-mri', 's-classify', 's-review'];
+    function setStep(id, opts = {}) {
+      STEPS.forEach((sid, i) => {
+        const el = document.getElementById(sid);
+        const idx = STEPS.indexOf(id);
+        el.classList.remove('active', 'done', 'err');
+        if (i < idx) el.classList.add('done');
+        else if (i === idx) el.classList.add(opts.err ? 'err' : 'active');
+      });
+    }
+
+    // ── Toast ────────────────────────────────────────────────────────────────────
+    function toast(msg, type = '') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast show ' + type;
+      setTimeout(() => { t.className = 'toast'; }, 3500);
+    }
+
+    // ── Chat helpers ─────────────────────────────────────────────────────────────
+    function scrollChat() {
+      const el = document.getElementById('chat-scroll');
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function escapeHTML(text) {
+      return String(text || '').replace(/[&<>"']/g, function (s) {
+        return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[s]);
+      });
+    }
+
+    function addAgentMsg(text, chips = [], missingFields = []) {
+      hideTyping();
+      const scroll = document.getElementById('chat-scroll');
+      const div = document.createElement('div');
+      div.className = 'msg agent';
+
+      let chipsHTML = '';
+      if (chips.length) {
+        chipsHTML = `<div class="bubble-chips">${chips.map(c =>
+          `<span class="bubble-chip">${c}</span>`).join('')}</div>`;
+      }
+      let missingHTML = '';
+      if (missingFields.length) {
+        missingHTML = `<div class="bubble-missing">${missingFields.map(f =>
+          `<span class="missing-chip">Missing: ${f.replace(/_/g, ' ')}</span>`).join('')}</div>`;
+      }
+
+      div.innerHTML = `
+    <div class="msg-sender">SynapsAgent</div>
+    <div class="msg-bubble">${text}${chipsHTML}${missingHTML}</div>`;
+      scroll.appendChild(div);
+      scrollChat();
+    }
+
+    function addUserMsg(label) {
+      const scroll = document.getElementById('chat-scroll');
+      const div = document.createElement('div');
+      div.className = 'msg user';
+      div.innerHTML = `
+    <div class="msg-sender">You (recording)</div>
+    <div class="msg-bubble">${label}</div>`;
+      scroll.appendChild(div);
+      scrollChat();
+    }
+
+    function showTyping() {
+      const t = document.getElementById('typing');
+      t.classList.add('show');
+      // Move typing indicator to bottom
+      document.getElementById('chat-scroll').appendChild(t);
+      scrollChat();
+    }
+    function hideTyping() {
+      document.getElementById('typing').classList.remove('show');
+    }
+
+    const REQUIRED_FIELDS = [
+      'headache_frequency', 'headache_severity', 'vision_changes', 'seizures',
+      'memory_loss', 'speech_difficulty', 'balance_issues', 'nausea_vomiting',
+      'symptom_duration', 'prior_brain_conditions', 'family_history_cancer',
+      'current_medications'
+    ];
+
+    const CLASS_DISPLAY = {
+      glioma: 'Glioma',
+      meningioma: 'Meningioma',
+      pituitary: 'Pituitary Tumor',
+      notumor: 'No Tumor',
+      no_tumor: 'No Tumor'
+    };
+
+    function formatFieldLabel(field) {
+      const labels = {
+        headache_frequency: 'Headache Frequency',
+        headache_severity: 'Headache Severity',
+        vision_changes: 'Vision Changes',
+        seizures: 'Seizures',
+        memory_loss: 'Memory Loss',
+        speech_difficulty: 'Speech Difficulty',
+        balance_issues: 'Balance Issues',
+        nausea_vomiting: 'Nausea / Vomiting',
+        symptom_duration: 'Symptom Duration',
+        prior_brain_conditions: 'Prior Brain Conditions',
+        family_history_cancer: 'Family History of Cancer',
+        current_medications: 'Current Medications'
+      };
+      return labels[field] || field.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function isLowPriorityValue(value) {
+      const text = String(value || '').trim().toLowerCase();
+      return ['', 'none', 'no', 'denied', 'not reported', 'n/a', 'na', 'negative'].includes(text);
+    }
+
+    function displayClassName(cls) {
+      if (!cls) return 'Pending';
+      const key = String(cls).trim().toLowerCase();
+      return CLASS_DISPLAY[key] || key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function confidenceText(confidence, fallback = 'N/A') {
+      if (confidence === null || confidence === undefined || confidence === '') return fallback;
+      const n = Number(confidence);
+      return Number.isFinite(n) ? `${(n * 100).toFixed(1)}%` : fallback;
+    }
+
+    function getPrediction(state) {
+      state = state || {};
+      const fromApi = state.ai_prediction || {};
+      const summaryMri = state.summary && state.summary.mri_result ? state.summary.mri_result : {};
+      const raw = Object.keys(fromApi).length ? fromApi : (state.mri_result || summaryMri || {});
+      const cls = raw.class || raw.predicted_class || null;
+      const confidence = raw.confidence !== undefined && raw.confidence !== null ? Number(raw.confidence) : null;
+      return {
+        class: cls,
+        display_class: raw.display_class || displayClassName(cls),
+        confidence: Number.isFinite(confidence) ? confidence : null,
+        confidence_pct: raw.confidence_pct || confidenceText(confidence),
+        probabilities: raw.probabilities || {}
+      };
+    }
+
+    function buildFallbackIntake(state) {
+      const fieldValues = state.field_values || {};
+      const checklist = state.symptom_checklist || {};
+      const rows = REQUIRED_FIELDS.map((field, index) => {
+        const covered = !!checklist[field];
+        const raw = fieldValues[field];
+        const value = raw && String(raw).trim()
+          ? String(raw).trim()
+          : covered ? 'Mentioned, details not captured' : 'Not reported';
+        let priority = (!covered || isLowPriorityValue(value)) ? 'low' : 'high';
+        if (priority === 'high' && ['prior_brain_conditions', 'family_history_cancer', 'current_medications'].includes(field)) {
+          priority = 'medium';
+        }
+        return { field, label: formatFieldLabel(field), value, covered, priority, order: index };
+      });
+      const rank = { high: 0, medium: 1, low: 2 };
+      return rows.sort((a, b) => (rank[a.priority] - rank[b.priority]) || (a.order - b.order));
+    }
+
+    function renderPatientIntake(state) {
+      const container = document.getElementById('patient-intake');
+      if (!container) return;
+      const rows = Array.isArray(state.patient_intake) && state.patient_intake.length
+        ? state.patient_intake
+        : buildFallbackIntake(state);
+      container.innerHTML = '';
+      rows.forEach(row => {
+        const item = document.createElement('div');
+        item.className = `intake-row ${row.priority === 'low' ? 'low' : ''}`;
+        const label = document.createElement('div');
+        label.className = 'intake-label';
+        label.textContent = row.label || formatFieldLabel(row.field);
+        const value = document.createElement('div');
+        value.className = 'intake-value';
+        value.textContent = row.value || (row.covered ? 'Mentioned, details not captured' : 'Not reported');
+        item.append(label, value);
+        container.appendChild(item);
+      });
+    }
+
+    // ── Timer ────────────────────────────────────────────────────────────────────
+    function startTimer() {
+      recSecs = 0;
+      const el = document.getElementById('rec-timer');
+      el.classList.add('show');
+      timerInt = setInterval(() => {
+        recSecs++;
+        const m = String(Math.floor(recSecs / 60));
+        const s = String(recSecs % 60).padStart(2, '0');
+        el.textContent = `${m}:${s}`;
+      }, 1000);
+    }
+    function stopTimer() {
+      clearInterval(timerInt);
+      document.getElementById('rec-timer').classList.remove('show');
+    }
+
+    // ── Waveform ─────────────────────────────────────────────────────────────────
+    function startWaveform(stream) {
+      audioCtx = new AudioContext();
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 256;
+      audioCtx.createMediaStreamSource(stream).connect(analyser);
+      const canvas = document.getElementById('waveform');
+      canvas.classList.add('show');
+      const ctx = canvas.getContext('2d');
+      const buf = new Uint8Array(analyser.frequencyBinCount);
+      function draw() {
+        animFrame = requestAnimationFrame(draw);
+        analyser.getByteTimeDomainData(buf);
+        const style = getComputedStyle(document.documentElement);
+        ctx.fillStyle = style.getPropertyValue('--surface-2').trim() || '#eee';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = style.getPropertyValue('--primary').trim() || '#01696f';
+        ctx.beginPath();
+        const slW = canvas.width / buf.length;
+        let x = 0;
+        for (let i = 0; i < buf.length; i++) {
+          const y = (buf[i] / 128) * (canvas.height / 2);
+          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+          x += slW;
+        }
+        ctx.lineTo(canvas.width, canvas.height / 2);
+        ctx.stroke();
+      }
+      draw();
+    }
+    function stopWaveform() {
+      if (animFrame) cancelAnimationFrame(animFrame);
+      if (audioCtx) audioCtx.close();
+      document.getElementById('waveform').classList.remove('show');
+    }
+
+    // ── Recording ────────────────────────────────────────────────────────────────
+    function toggleRecording() {
+      if (!isRecording) startRecording(); else stopRecording();
+    }
+
+    async function startRecording() {
+      if (isRecording) return;
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioChunks = [];
+        mediaRec = new MediaRecorder(stream, { mimeType: getSupportedMime() });
+        mediaRec.ondataavailable = e => { if (e.data.size) audioChunks.push(e.data); };
+        mediaRec.onstop = onRecordingStop;
+        mediaRec.start(100);
+        isRecording = true;
+
+        // UI updates
+        const btn = document.getElementById('mic-btn');
+        btn.classList.add('recording');
+        btn.innerHTML = '<i data-lucide="square" style="width:26px;height:26px;"></i>';
+        lucide.createIcons();
+        document.getElementById('rec-label').innerHTML = 'Recording… press <strong>Enter</strong> or click to stop';
+        document.getElementById('enter-hint').classList.add('show');
+        lucide.createIcons();
+        document.getElementById('playback').classList.remove('show');
+        startTimer();
+        startWaveform(stream);
+      } catch (err) {
+        toast('Microphone access denied. Check browser permissions.', 'err');
+        console.error(err);
+      }
+    }
+
+    function stopRecording() {
+      if (!isRecording) return;
+      if (mediaRec && mediaRec.state !== 'inactive') {
+        mediaRec.stop();
+        mediaRec.stream.getTracks().forEach(t => t.stop());
+      }
+      isRecording = false;
+      stopTimer();
+      stopWaveform();
+
+      const btn = document.getElementById('mic-btn');
+      btn.classList.remove('recording');
+      btn.innerHTML = '<i data-lucide="mic" style="width:26px;height:26px;"></i>';
+      lucide.createIcons();
+      document.getElementById('rec-label').innerHTML = 'Press mic or <strong>Space</strong> to record again';
+      document.getElementById('enter-hint').classList.remove('show');
+    }
+
+    function getSupportedMime() {
+      const types = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4'];
+      return types.find(t => MediaRecorder.isTypeSupported(t)) || '';
+    }
+
+    function onRecordingStop() {
+      const mime = getSupportedMime() || 'audio/webm';
+      const rawBlob = new Blob(audioChunks, { type: mime });
+      convertToWav(rawBlob).then(wavBlob => {
+        audioBlob = wavBlob;
+        if (blobURL) URL.revokeObjectURL(blobURL);
+        blobURL = URL.createObjectURL(audioBlob);
+        document.getElementById('audio-player').src = blobURL;
+        document.getElementById('playback').classList.add('show');
+        document.getElementById('btn-send').disabled = false;
+        lucide.createIcons();
+      });
+    }
+
+    function retake() {
+      document.getElementById('playback').classList.remove('show');
+      document.getElementById('btn-send').disabled = true;
+      audioBlob = null;
+      if (blobURL) { URL.revokeObjectURL(blobURL); blobURL = null; }
+    }
+
+    // ── Submit Audio ──────────────────────────────────────────────────────────────
+    async function submitAudio() {
+      if (!audioBlob) return;
+      const btn = document.getElementById('btn-send');
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner"></div> Processing…';
+
+      // Add user message to chat
+      addUserMsg(`🎙 Recording ${audioRound + 1} submitted`);
+      showTyping();
+
+      try {
+        // const ext = audioBlob.type.includes('ogg') ? 'ogg' : audioBlob.type.includes('mp4') ? 'mp4' : 'webm';
+        // const file = new File([audioBlob], `rec.${ext}`, { type: audioBlob.type });
+        const file = new File([audioBlob], 'rec.wav', { type: 'audio/wav' });
+        const form = new FormData();
+        form.append('file', file);
+
+        let data;
+        if (!patientId) {
+          const res = await fetch('/api/patient/start', { method: 'POST', body: form });
+          if (!res.ok) throw new Error(await res.text());
+          data = await res.json();
+          patientId = data.patient_id;
+          document.getElementById('pid-text').textContent = patientId;
+          document.getElementById('pid-badge').classList.add('show');
+          audioRound = 1;
+        } else {
+          const res = await fetch(`/api/patient/${patientId}/audio`, { method: 'POST', body: form });
+          if (!res.ok) throw new Error(await res.text());
+          data = await res.json();
+          audioRound++;
+        }
+
+        document.getElementById('round-badge').style.display = 'block';
+        document.getElementById('round-num').textContent = audioRound + 1;
+
+        handleStateUpdate(data.state);
+
+      } catch (err) {
+        hideTyping();
+        toast('Error: ' + err.message, 'err');
+        console.error(err);
+      } finally {
+        btn.innerHTML = '<i data-lucide="send" style="width:15px;height:15px;"></i> Send to Agent';
+        lucide.createIcons();
+        // Reset playback
+        document.getElementById('playback').classList.remove('show');
+        document.getElementById('btn-send').disabled = true;
+        audioBlob = null;
+      }
+    }
+
+    // ── Handle State Update ───────────────────────────────────────────────────────
+    function handleStateUpdate(state) {
+      if (!state) return;
+      lastState = state;
+      const symptoms = state.symptoms || [];
+      const missing = state.missing_fields || [];
+      const fq = state.followup_question;
+      const transcription = state.transcription;
+      const mriReq = state.mri_requested;
+      const prediction = getPrediction(state);
+
+      if (transcription && transcription !== lastTranscript) {
+        addAgentMsg(`Transcript: <em>${escapeHTML(transcription)}</em>`);
+        lastTranscript = transcription;
+      }
+
+      // if (symptoms.length > 0 && missing.length > 0 && fq) {
+      //   // Still collecting — show what was extracted + what's missing + next question
+      //   setStep('s-followup');
+      //   addAgentMsg(
+      //     `Got it — I extracted <strong>${symptoms.length}</strong> symptom(s). I still need a bit more information:<br><br><em>"${fq}"</em>`,
+      //     symptoms,
+      //     missing
+      //   );
+      //   document.getElementById('rec-label').innerHTML = 'Answer above — press <strong>Space</strong> to record';
+      // } else if (symptoms.length > 0 && missing.length === 0) {
+      //   // Complete — advance to MRI
+      //   setStep('s-mri');
+      //   addAgentMsg(
+      //     `Symptom intake complete ✓ I've captured all required information. Please upload the MRI scan to continue.`,
+      //     symptoms
+      //   );
+      //   document.getElementById('mic-btn').disabled = true;
+      //   document.getElementById('rec-label').innerHTML = 'Symptom intake complete — upload MRI below';
+      //   if (mriFile) document.getElementById('btn-upload').disabled = false;
+      //   toast('All symptoms captured. Upload MRI scan.', 'ok');
+      // } else if (fq) {
+      //   // First round, just a follow-up
+      //   setStep('s-followup');
+      //   addAgentMsg(`<em>"${fq}"</em>`, [], missing);
+      // }
+      if (symptoms.length > 0 && missing.length > 0) {
+        setStep('s-followup');
+        // Still collecting — show ONLY missing fields + next question
+        addAgentMsg(
+          `Got it. I still need a bit more information.<br><em>${fq}</em>`,
+          [],          // ← don't flood chat with all symptoms
+          missing      // ← only show what's still missing
+        );
+      } else if (symptoms.length > 0 && missing.length === 0 && !symptomSummaryAnnounced) {
+        // Complete — now show full symptom summary once
+        symptomSummaryAnnounced = true;
+        setStep(mriReq ? 's-mri' : 's-review');
+        let msg = `Symptom intake complete! Here's what I captured:`;
+        addAgentMsg(msg, symptoms, []);
+        if (state.mri_recommendation !== null) {
+          const rec = state.mri_recommendation ? "MRI recommended" : "MRI not recommended";
+          const reason = state.mri_recommendation_reason || "";
+          msg += `<br><br><strong>${rec}</strong>${reason ? `: ${reason}` : ""}`;
+        }
+        const micBtn = document.getElementById('mic-btn');
+        if (micBtn) micBtn.disabled = true;
+        document.getElementById('rec-label').innerHTML = mriReq
+          ? 'Symptom intake complete - upload MRI below'
+          : 'Symptom intake complete - awaiting doctor review';
+        document.getElementById('playback').classList.remove('show');
+      }
+
+      // If MRI result came back
+      if (prediction.class) {
+        setStep('s-classify');
+        if (!mriClassificationAnnounced) {
+          mriClassificationAnnounced = true;
+          addAgentMsg(
+            `MRI classified as <strong>${prediction.display_class}</strong> (confidence: ${prediction.confidence_pct}). Please complete the doctor review.`
+          );
+        }
+        renderSummary(state);
+        setStep('s-review');
+      } else if (symptoms.length > 0) {
+        renderSummary(state);
+      }
+
+      if ((state.status === 'reviewed' || state.final_diagnosis) && !finalReviewAnnounced) {
+        finalReviewAnnounced = true;
+        addAgentMsg('Doctor review saved. Final diagnosis and notes are now reflected in the summary.');
+      }
+
+      lucide.createIcons();
+      scrollChat();
+    }
+
+    // ── MRI Upload ────────────────────────────────────────────────────────────────
+    function onFileSelect(e) { if (e.target.files[0]) setMRIFile(e.target.files[0]); }
+    function onDragOver(e) { e.preventDefault(); document.getElementById('upload-zone').classList.add('drag'); }
+    function onDragLeave(e) { document.getElementById('upload-zone').classList.remove('drag'); }
+    function onDrop(e) {
+      e.preventDefault();
+      document.getElementById('upload-zone').classList.remove('drag');
+      if (e.dataTransfer.files[0]) setMRIFile(e.dataTransfer.files[0]);
+    }
+    function setMRIFile(file) {
+      mriFile = file;
+      document.getElementById('upload-zone').classList.add('has-file');
+      document.getElementById('up-label').textContent = `✓ ${file.name}`;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        document.getElementById('mri-img').src = ev.target.result;
+        document.getElementById('mri-preview').classList.add('show');
+      };
+      reader.readAsDataURL(file);
+      if (patientId) document.getElementById('btn-upload').disabled = false;
+    }
+
+    async function uploadMRI() {
+      if (!patientId || !mriFile) return;
+      const btn = document.getElementById('btn-upload');
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner"></div> Classifying MRI…';
+      setStep('s-classify');
+      showTyping();
+
+      try {
+        const form = new FormData();
+        form.append('file', mriFile);
+        const res = await fetch(`/api/patient/${patientId}/upload-mri`, { method: 'POST', body: form });
+        if (!res.ok) throw new Error(await res.text());
+        const data = await res.json();
+        handleStateUpdate(data.state);
+      } catch (err) {
+        hideTyping();
+        toast('MRI upload error: ' + err.message, 'err');
+        setStep('s-mri', { err: true });
+        btn.disabled = false;
+      }
+      btn.innerHTML = '<i data-lucide="send" style="width:15px;height:15px;"></i> Submit MRI & Continue';
+      lucide.createIcons();
+    }
+
+    // ── Approve ───────────────────────────────────────────────────────────────────
+    async function approveResults() {
+      if (!patientId) return;
+      const btn = document.getElementById('btn-approve');
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner"></div> Approving';
+      try {
+        const res = await fetch(`/api/patient/${patientId}/approve`, { method: 'POST' });
+        if (!res.ok) throw new Error(await res.text());
+        const data = await res.json();
+        lastState = data.state || lastState;
+        if (data.state) renderSummary(data.state);
+
+        document.getElementById('b-warn').classList.remove('show');
+        document.getElementById('b-ok').classList.add('show');
+        btn.style.display = 'none';
+        document.getElementById('doc-edit').classList.add('show');
+
+        // ✅ Show MRI pending message if requested
+        if (data.state && data.state.mri_requested) {
+          addAgentMsg('✅ Results approved.<br>📡 <strong>MRI request sent to imaging center.</strong> Pending MRI upload — please upload the scan below when ready.');
+          setStep('s-mri');
+        } else {
+          addAgentMsg('Results approved. You can now add a doctor note or corrected diagnosis below.');
+        }
+        lucide.createIcons();
+        toast('Results approved.', 'ok');
+      } catch (err) {
+        toast('Error: ' + err.message, 'err');
+        btn.disabled = false;
+        btn.innerHTML = '<i data-lucide="check" style="width:15px;height:15px"></i> Approve Results';
+        lucide.createIcons();
+      }
+    }
+    // async function approveResults() {
+    //   if (!patientId) return;
+    //   const btn = document.getElementById('btn-approve');
+    //   btn.disabled = true;
+    //   btn.innerHTML = '<div class="spinner"></div> Approving…';
+    //   try {
+    //     const res = await fetch(`/api/patient/${patientId}/approve`, { method: 'POST' });
+    //     if (!res.ok) throw new Error(await res.text());
+    //     document.getElementById('b-warn').classList.remove('show');
+    //     document.getElementById('b-ok').classList.add('show');
+    //     btn.style.display = 'none';
+    //     document.getElementById('doc-edit').classList.add('show');
+    //     document.getElementById('btn-edit-toggle').style.display = 'none';
+    //     addAgentMsg('Results approved. You can now add a doctor note or corrected diagnosis below.');
+    //     lucide.createIcons();
+    //     toast('Results approved.', 'ok');
+    //   } catch (err) {
+    //     toast('Error: ' + err.message, 'err');
+    //     btn.disabled = false;
+    //     btn.innerHTML = '<i data-lucide="check" style="width:15px;height:15px;"></i> Approve Results';
+    //     lucide.createIcons();
+    //   }
+    // }
+
+    // ── Save Note ─────────────────────────────────────────────────────────────────
+    async function saveNote() {
+      if (!patientId) return;
+      const corrected = document.getElementById('dx-select').value;
+      const note = document.getElementById('doc-note').value.trim();
+      const prediction = getPrediction(lastState || {});
+      const body = {
+        confirmed_diagnosis: corrected || prediction.class || null,
+        notes: note || null
+      };
+      try {
+        const res = await fetch(`/api/patient/${patientId}/doctor-review`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        if (!res.ok) throw new Error(await res.text());
+        const data = await res.json();
+        handleStateUpdate(data.state);
+
+        // ✅ Show note immediately in the notes panel
+        if (note) {
+          document.getElementById('doctor-notes-text').textContent = note;
+          document.getElementById('doctor-notes-display').style.display = 'flex';
+        }
+        toast('Saved successfully.', 'ok');
+      } catch (err) {
+        toast('Error saving: ' + err.message, 'err');
+      }
+    }
+    // async function saveNote() {
+    //   if (!patientId) return;
+    //   const corrected = document.getElementById('dx-select').value;
+    //   const note = document.getElementById('doc-note').value.trim();
+    //   const body = {};
+    //   if (corrected) { body.corrected_class = corrected; body.diagnosis_corrected = true; }
+    //   if (note) body.doctor_note = note;
+    //   try {
+    //     const res = await fetch(`/api/patient/${patientId}/update`, {
+    //       method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+    //     });
+    //     if (!res.ok) throw new Error(await res.text());
+    //     if (corrected) updateDxBadge(corrected);
+    //     toast('Summary updated successfully.', 'ok');
+    //   } catch (err) {
+    //     toast('Error saving note: ' + err.message, 'err');
+    //   }
+    // }
+
+    function toggleEdit() {
+      document.getElementById('doc-edit').classList.toggle('show');
+      lucide.createIcons();
+    }
+
+    // ── Render Summary ────────────────────────────────────────────────────────────
+    function renderSummary(state) {
+      if (!state) return;
+      document.getElementById('sum-empty').style.display = 'none';
+      document.getElementById('sum-content').classList.add('show');
+
+      const symptoms = state.symptoms || [];
+      const prediction = getPrediction(state);
+
+      // ── MRI Classification badge ─────────────────────────────────────────
+      updateDxBadge(prediction.class || 'unknown');
+
+      const conf = prediction.confidence;
+      if (conf !== null) {
+        const pct = Math.round(conf * 100);
+        document.getElementById('conf-fill').style.width = pct + '%';
+        document.getElementById('conf-pct').textContent = prediction.confidence_pct;
+      } else {
+        document.getElementById('conf-fill').style.width = '0%';
+        document.getElementById('conf-pct').textContent = 'N/A';
+      }
+      // ── AI prediction panel ────────────────
+      const aiPanel = document.getElementById('ai-prediction-panel');
+      if (aiPanel) {
+        if (prediction.class) {
+          document.getElementById('ai-pred-class').textContent =
+            prediction.display_class;
+          document.getElementById('ai-pred-conf').textContent =
+            prediction.confidence_pct;
+          aiPanel.style.display = 'flex';
+        } else {
+          aiPanel.style.display = 'none';
+        }
+      }
+
+      // ── Symptom chips ─────────────────────────────────────────────────────
+      const chips = document.getElementById('sym-chips');
+      chips.innerHTML = '';
+
+      // Render collected symptom strings
+      symptoms.forEach(s => {
+        if (!s) return;
+        const c = document.createElement('span');
+        c.style = 'padding:2px var(--s3);border-radius:var(--r-full);background:var(--surface-off);border:1px solid var(--border);font-size:var(--tx-xs);color:var(--muted)';
+        c.textContent = s;
+        chips.appendChild(c);
+      });
+
+      // Render all required intake fields with actual captured values.
+      renderPatientIntake(state);
+
+      // ── Key-value info grid ───────────────────────────────────────────────
+      const probs = prediction.probabilities || {};
+      const pairs = [
+        ['Patient ID', state.patient_id],
+        ['Status', state.status],
+        ...(state.final_diagnosis ? [['Doctor Final Diagnosis', displayClassName(state.final_diagnosis)]] : []),
+        ['Doctor Review', state.doctor_review_required !== false ? 'Required' : 'Not required'],
+        ['MRI Recommendation', state.mri_recommendation === true ? 'Yes' : state.mri_recommendation === false ? 'No' : 'Pending'],
+        ...(state.mri_recommendation_reason ? [['Recommendation Reason', state.mri_recommendation_reason]] : []),
+        ...Object.entries(probs).map(([k, v]) => [
+          k.charAt(0).toUpperCase() + k.slice(1),
+          (v * 100).toFixed(1) + '%'
+        ])
+      ];
+      document.getElementById('kv-grid').innerHTML =
+        pairs.map(([k, v]) =>
+          `<span class="kv-k">${k}</span><span class="kv-v">${v}</span>`
+        ).join('');
+
+      // ── MRI Requested row with override toggle ────────────────────────────
+      const mriReq = state.mri_requested;
+      const mriRow = document.createElement('div');
+      mriRow.style = 'display:grid;grid-template-columns:auto 1fr;gap:var(--s2) var(--s4);font-size:var(--tx-sm);align-items:center;margin-top:var(--s2)';
+      mriRow.innerHTML = `
+          <span class="kv-k">MRI Requested</span>
+          <span style="display:flex;align-items:center;gap:var(--s2)">
+              <span id="mri-req-badge" style="padding:2px var(--s3);border-radius:var(--r-full);
+                  font-size:var(--tx-xs);font-weight:600;
+                  background:${mriReq === true ? 'var(--success-l)' : mriReq === false ? 'var(--warn-l)' : 'var(--surface-off)'};
+                  color:${mriReq === true ? 'var(--success)' : mriReq === false ? 'var(--warn)' : 'var(--muted)'}">
+                  ${mriReq === true ? 'Yes' : mriReq === false ? 'No' : 'Pending'}
+              </span>
+              <button class="btn btn-sm btn-outline" onclick="toggleMriRequested()"
+                  style="padding:2px 8px;min-height:28px;font-size:var(--tx-xs)">
+                  Override
+              </button>
+          </span>`;
+      document.getElementById('kv-grid').appendChild(mriRow);
+
+      // ── Approval banners + buttons ────────────────────────────────────────
+      const reviewReq = state.doctor_review_required !== false;
+      document.getElementById('b-warn').classList.toggle('show', reviewReq && !state.doctor_approved);
+      document.getElementById('b-ok').classList.toggle('show', !!state.doctor_approved);
+      document.getElementById('btn-approve').disabled = !reviewReq || !!state.doctor_approved;
+
+      if (reviewReq && !state.doctor_approved) {
+        document.getElementById('btn-approve').style.display = 'flex';
+        document.getElementById('btn-edit-toggle').style.display = 'none';
+      } else if (state.doctor_approved) {
+        document.getElementById('btn-approve').style.display = 'none';
+        document.getElementById('btn-edit-toggle').style.display = 'flex';
+        document.getElementById('doc-edit').classList.add('show');
+        setStep('s-review');   // ✅ highlight step 5 when approved
+      }
+
+      lucide.createIcons();
+
+      // ── Updated Doctor's note ────────────────────────────────────────
+      const notesDisplay = document.getElementById('doctor-notes-display');
+      const notesText = state.doctor_notes || (state.summary && state.summary.doctor_notes);
+      if (notesText) {
+        document.getElementById('doctor-notes-text').textContent = notesText;
+        notesDisplay.style.display = 'flex';
+      } else {
+        notesDisplay.style.display = 'none';
+      }
+    }
+    // function renderSummary(state) {
+    //   if (!state) return;
+    //   document.getElementById('sum-empty').style.display = 'none';
+    //   document.getElementById('sum-content').classList.add('show');
+
+    //   const summary = state.summary || {};
+    //   const mriResult = state.mri_result || {};
+    //   const symptoms = state.symptoms || [];
+
+    //   updateDxBadge(mriResult.class || summary.predicted_class || 'unknown');
+
+    //   const conf = mriResult.confidence ?? summary.confidence ?? null;
+    //   if (conf !== null) {
+    //     const pct = Math.round(conf * 100);
+    //     document.getElementById('conf-fill').style.width = pct + '%';
+    //     document.getElementById('conf-pct').textContent = pct + '%';
+    //   } else {
+    //     document.getElementById('conf-pct').textContent = 'N/A';
+    //   }
+
+    //   const chips = document.getElementById('sym-chips');
+    //   chips.innerHTML = '';
+    //   symptoms.forEach(s => {
+    //     if (!s) return;
+    //     const c = document.createElement('span');
+    //     c.className = 'chip';
+    //     c.style = 'padding:2px var(--s3);border-radius:var(--r-full);background:var(--surface-off);border:1px solid var(--border);font-size:var(--tx-xs);color:var(--muted);';
+    //     c.textContent = s;
+    //     chips.appendChild(c);
+    //   });
+
+    //   const probs = mriResult.probabilities || {};
+    //   const pairs = [
+    //     ['Patient ID', state.patient_id || '—'],
+    //     ['Status', state.status || '—'],
+    //     ['MRI Requested', state.mri_requested ? 'Yes' : 'No'],
+    //     ['Doctor Review', state.doctor_review_required !== false ? 'Required' : 'Not required'],
+    //   ];
+    //   Object.entries(probs).forEach(([k, v]) =>
+    //     pairs.push([k.charAt(0).toUpperCase() + k.slice(1), (v * 100).toFixed(1) + '%']));
+    //   document.getElementById('kv-grid').innerHTML = pairs.map(([k, v]) =>
+    //     `<span class="kv-k">${k}</span><span class="kv-v">${v}</span>`).join('');
+
+    //   const reviewReq = state.doctor_review_required !== false;
+    //   document.getElementById('b-warn').classList.toggle('show', reviewReq);
+    //   document.getElementById('btn-approve').disabled = !reviewReq;
+    //   if (reviewReq) document.getElementById('btn-approve').style.display = 'flex';
+    //   document.getElementById('btn-edit-toggle').style.display = reviewReq ? 'none' : 'flex';
+    //   lucide.createIcons();
+    // }
+
+    function updateDxBadge(cls) {
+      const badge = document.getElementById('dx-badge');
+      const map = {
+        glioma: 'Glioma', meningioma: 'Meningioma',
+        pituitary: 'Pituitary Tumor', notumor: 'No Tumor', unknown: 'Pending…'
+      };
+      badge.className = 'dx-badge ' + (cls || 'unknown');
+      badge.textContent = map[cls] || cls || 'Pending…';
+    }
+
+    // Converts any audio blob → 16-bit PCM WAV using the Web Audio API
+    async function convertToWav(blob) {
+      const arrayBuf = await blob.arrayBuffer();
+      const audioCtxTmp = new AudioContext({ sampleRate: 16000 });
+      const decoded = await audioCtxTmp.decodeAudioData(arrayBuf);
+      await audioCtxTmp.close();
+
+      const numChannels = 1;  // mono — Whisper only needs mono
+      const sampleRate = 16000;
+      const samples = decoded.getChannelData(0);  // take left/only channel
+      const pcm = new Int16Array(samples.length);
+      for (let i = 0; i < samples.length; i++) {
+        // Clamp float32 → int16
+        pcm[i] = Math.max(-32768, Math.min(32767, Math.round(samples[i] * 32767)));
+      }
+
+      // Build WAV file header + PCM data
+      const wavBuf = new ArrayBuffer(44 + pcm.byteLength);
+      const view = new DataView(wavBuf);
+      const write = (off, str) => [...str].forEach((c, i) => view.setUint8(off + i, c.charCodeAt(0)));
+
+      write(0, 'RIFF');
+      view.setUint32(4, 36 + pcm.byteLength, true);
+      write(8, 'WAVE');
+      write(12, 'fmt ');
+      view.setUint32(16, 16, true);           // PCM chunk size
+      view.setUint16(20, 1, true);           // PCM format
+      view.setUint16(22, numChannels, true);
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, sampleRate * 2, true); // byte rate
+      view.setUint16(32, 2, true);           // block align
+      view.setUint16(34, 16, true);           // bits per sample
+      write(36, 'data');
+      view.setUint32(40, pcm.byteLength, true);
+      new Int16Array(wavBuf, 44).set(pcm);
+
+      return new Blob([wavBuf], { type: 'audio/wav' });
+    }
+
+    async function toggleMriRequested() {
+      if (!patientId) return;
+      const badge = document.getElementById('mri-req-badge');
+      const current = badge.textContent.trim() === 'Yes';
+      const newVal = !current;
+
+      // ✅ Update badge immediately — don't wait for server
+      badge.textContent = newVal ? 'Yes' : 'No';
+      badge.style.background = newVal ? 'var(--success-l)' : 'var(--warn-l)';
+      badge.style.color = newVal ? 'var(--success)' : 'var(--warn)';
+
+      try {
+        const res = await fetch(`/api/patient/${patientId}/set-mri`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mri_requested: newVal })
+        });
+        if (!res.ok) throw new Error(await res.text());
+        toast(`MRI request set to: ${newVal ? 'Yes' : 'No'}`, 'ok');
+      } catch (err) {
+        // Revert badge on failure
+        badge.textContent = current ? 'Yes' : 'No';
+        badge.style.background = current ? 'var(--success-l)' : 'var(--warn-l)';
+        badge.style.color = current ? 'var(--success)' : 'var(--warn)';
+        toast('Error updating MRI request: ' + err.message, 'err');
+      }
+    }
+  </script>
+</body>
+
+</html>
