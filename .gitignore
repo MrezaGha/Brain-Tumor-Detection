@@ -14,3 +14,13 @@ preprocessed/test_y.npy
 preprocessed/train_X.npy
 preprocessed/train_y.npy
 *.npy
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+agentic_agent/app/audio/*
+agentic_agent/app/results/*
+agentic_agent/app/scans/*
+agentic_agent/static/*
+Brain_Cancer/*
+Brain_Cancer
