@@ -1,0 +1,38 @@
+fastapi>=0.95.0
+uvicorn[standard]>=0.21.0
+pydantic>=2.0
+python-multipart>=0.0.6
+aiofiles>=23.1.0
+python-dotenv>=1.0.0
+
+# LangGraph / LangChain (API clients used in nodes)
+langgraph>=0.1.0
+langchain>=0.0.400
+langchain-openai>=0.1.0
+
+# OpenAI / Whisper
+openai>=1.0.0
+openai-whisper>=20230314
+
+# PyTorch + vision
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Computer vision / preprocessing / plotting / data
+opencv-python>=4.7.0
+numpy>=1.24
+pandas>=2.0
+matplotlib>=3.7
+seaborn>=0.12
+tqdm>=4.65
+
+# ML utils
+scikit-learn>=1.2
+
+# Audio & tests
+sounddevice>=0.4.6
+scipy>=1.9
+pytest>=7.0
+
+# Extras
+typing-extensions>=4.5
