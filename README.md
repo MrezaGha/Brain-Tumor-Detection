@@ -3,6 +3,19 @@ This project benchmarks two CNN architectures — ResNet-50 and EfficientNet-B0 
 
 EfficientNet-B0 came out on top, converging faster and generalizing better across all four classes, while ResNet-50 showed more signs of overfitting despite its depth. On top of the classification pipeline, we integrated an agentic AI component that takes the model's prediction and generates a natural language explanation — making the output actually useful in a clinical context, not just a label.
 
+Dataset name:
+- Brain Cancer - MRI dataset  (6057 Samples)
+- Brain tumor MRI Dataset ( 7200 Samples)
+
+Source of Datasets
+- Brain Cancer - MRI dataset: https://www.kaggle.com/datasets/orvile/brain-cancer-mri-dataset
+- Brain tumor MRI Dataset: https://www.kaggle.com/datasets/masoudnickparvar/brain-tumor-mri-dataset
+https://www.kaggle.com/datasets/navoneel/brain-mri-images-for-brain-tumor-detection
+
+Modality:
+- Image
+
+
 Quick start
 - Install dependencies:
   pip install -r requirements.txt
